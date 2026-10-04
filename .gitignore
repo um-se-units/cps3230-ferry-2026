@@ -1,0 +1,22 @@
+# Maven
+target/
+dependency-reduced-pom.xml
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# What the application writes when it runs
+notifications.log
+*.mv.db
+*.trace.db
+
+# Where jqwik keeps the samples that failed
+.jqwik-database

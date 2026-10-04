@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fliegu Ferries: book a crossing</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <h1>Fliegu Ferries</h1>
+    <p><a href="index.html" id="back-to-search" data-testid="back-to-search">Back to search</a></p>
+</header>
+
+<main>
+    <section>
+        <h2>Your sailing</h2>
+        <p id="sailing-summary" data-testid="sailing-summary" role="status">Loading the sailing.</p>
+    </section>
+
+    <section>
+        <h2>Who is travelling</h2>
+        <div id="passenger-list" data-testid="passenger-list"></div>
+        <p>
+            <button type="button" id="add-passenger" data-testid="add-passenger" class="secondary">
+                Add another passenger
+            </button>
+        </p>
+
+        <div class="checkbox">
+            <input type="checkbox" id="vehicle-toggle" data-testid="vehicle-toggle">
+            <label for="vehicle-toggle">I am bringing a vehicle</label>
+        </div>
+        <p id="vehicle-fields" hidden>
+            <label for="vehicle-registration">Vehicle registration</label>
+            <input type="text" id="vehicle-registration" data-testid="vehicle-registration"
+                   autocomplete="off">
+        </p>
+
+        <p>
+            <label for="contact-email">Contact e-mail address</label>
+            <input type="email" id="contact-email" data-testid="contact-email" autocomplete="email">
+        </p>
+    </section>
+
+    <section>
+        <h2>Price</h2>
+        <p class="price" id="quote-amount" data-testid="quote-amount" role="status">&#x20AC;0.00</p>
+        <p class="hint">Infants under three travel free. Ten or more fare paying passengers get 15% off.</p>
+        <p>
+            <button type="button" id="reserve-button" data-testid="reserve-button">Hold these places</button>
+        </p>
+        <p class="errors" id="book-errors" data-testid="book-errors" role="alert"></p>
+    </section>
+
+    <section id="payment-section" data-testid="payment-section" hidden>
+        <h2>Pay for booking <span id="reserved-reference" data-testid="reserved-reference"></span></h2>
+        <p>
+            <label for="card-number">Card number</label>
+            <input type="text" id="card-number" data-testid="card-number" value="4111111111111111"
+                   autocomplete="off">
+        </p>
+        <p class="hint">A card ending in 0000 is always turned down.</p>
+        <p>
+            <button type="button" id="confirm-button" data-testid="confirm-button">Pay and confirm</button>
+        </p>
+    </section>
+</main>
+
+<script src="app.js"></script>
+<script>ferry.startBookingPage();</script>
+</body>
+</html>

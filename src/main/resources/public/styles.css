@@ -1,0 +1,172 @@
+:root {
+    --ink: #1c2530;
+    --muted: #4a5765;
+    --line: #c7d0da;
+    --sea: #12506e;
+    --sea-dark: #0d3a50;
+    --paper: #ffffff;
+    --wash: #f3f6f9;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--wash);
+    line-height: 1.5;
+}
+
+header {
+    background: var(--sea);
+    color: var(--paper);
+    padding: 1rem 1.5rem;
+}
+
+header a {
+    color: var(--paper);
+}
+
+header p {
+    margin: 0.25rem 0 0;
+}
+
+main {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+section {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+h2 {
+    font-size: 1.15rem;
+    margin-top: 0;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+input, select {
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper);
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+}
+
+input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+}
+
+button {
+    font: inherit;
+    font-weight: 600;
+    color: var(--paper);
+    background: var(--sea);
+    border: 1px solid var(--sea-dark);
+    border-radius: 4px;
+    padding: 0.45rem 0.9rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--sea-dark);
+}
+
+button[disabled] {
+    background: var(--muted);
+    border-color: var(--muted);
+    cursor: not-allowed;
+}
+
+button.secondary {
+    color: var(--sea-dark);
+    background: var(--paper);
+    border-color: var(--sea-dark);
+}
+
+.fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    text-align: left;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.hint {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.errors {
+    color: #8a1c1c;
+    background: #fdeeee;
+    border: 1px solid #e0b4b4;
+    border-radius: 4px;
+    padding: 0.6rem 0.8rem;
+}
+
+.errors:empty {
+    display: none;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.passenger {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: flex-end;
+    border-top: 1px solid var(--line);
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.checkbox label {
+    margin: 0;
+}
+
+/* booking.html only: the small print under the confirmation */
+.smallprint {
+    color: #a9a9a9;
+    font-size: 0.85rem;
+}

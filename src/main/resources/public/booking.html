@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fliegu Ferries: your booking</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <h1>Fliegu Ferries</h1>
+    <p><a href="index.html" id="back-to-search" data-testid="back-to-search">Back to search</a></p>
+</header>
+
+<main>
+    <section>
+        <h2>Your booking</h2>
+        <p class="errors" id="booking-errors" data-testid="booking-errors" role="alert"></p>
+        <dl>
+            <dt>Reference</dt>
+            <dd id="booking-reference" data-testid="booking-reference"></dd>
+            <dt>Status</dt>
+            <dd id="booking-status" data-testid="booking-status"></dd>
+            <dt>Sailing</dt>
+            <dd id="booking-sailing" data-testid="booking-sailing"></dd>
+            <dt>Passengers</dt>
+            <dd id="booking-passengers" data-testid="booking-passengers"></dd>
+            <dt>Vehicle</dt>
+            <dd id="booking-vehicle" data-testid="booking-vehicle"></dd>
+            <dt>Price</dt>
+            <dd id="booking-price" data-testid="booking-price"></dd>
+        </dl>
+        <p class="smallprint">
+            Keep this reference. You will be asked for it at the terminal.
+        </p>
+    </section>
+
+    <section>
+        <h2>Send a copy</h2>
+        <p>Another e-mail address</p>
+        <p>
+            <input type="email" id="copy-to" data-testid="copy-to">
+            <button type="button" id="send-copy" data-testid="send-copy" class="secondary">Send</button>
+        </p>
+        <p class="hint" id="copy-result" data-testid="copy-result" role="status"></p>
+    </section>
+
+    <section>
+        <h2>Change your mind</h2>
+        <p class="hint">A booking can be called off until two hours before the sailing leaves.</p>
+        <p>
+            <button type="button" id="cancel-button" data-testid="cancel-button">Cancel this booking</button>
+        </p>
+        <p class="hint" id="cancel-result" data-testid="cancel-result" role="status"></p>
+    </section>
+</main>
+
+<script src="app.js"></script>
+<script>ferry.startConfirmationPage();</script>
+</body>
+</html>

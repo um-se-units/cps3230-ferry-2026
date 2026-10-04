@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fliegu Ferries: find a sailing</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <h1>Fliegu Ferries</h1>
+    <p>Crossings between &#x010A;irkewwa and M&#x0121;arr</p>
+</header>
+
+<main>
+    <section>
+        <h2>Find a sailing</h2>
+        <form id="search-form" data-testid="search-form">
+            <div class="fields">
+                <div>
+                    <label for="search-date">Date of travel</label>
+                    <input type="date" id="search-date" name="date" data-testid="search-date" required>
+                </div>
+                <div>
+                    <label for="search-from">Leaving from</label>
+                    <select id="search-from" name="from" data-testid="search-from">
+                        <option value="CIRKEWWA">&#x010A;irkewwa</option>
+                        <option value="MGARR">M&#x0121;arr</option>
+                    </select>
+                </div>
+                <div>
+                    <button type="submit" id="search-button" data-testid="search-button">Search</button>
+                </div>
+            </div>
+        </form>
+        <p class="errors" id="search-errors" data-testid="search-errors" role="alert"></p>
+    </section>
+
+    <section>
+        <h2>Sailings</h2>
+        <p class="hint" id="results-summary" data-testid="results-summary" role="status">
+            Choose a date and search.
+        </p>
+        <table id="results-table" data-testid="results-table">
+            <caption class="hint">Sailings found, earliest first</caption>
+            <thead>
+            <tr>
+                <th scope="col">Departs</th>
+                <th scope="col">Route</th>
+                <th scope="col">Passenger places left</th>
+                <th scope="col">Vehicle places left</th>
+                <th scope="col">Book</th>
+            </tr>
+            </thead>
+            <tbody id="results-body" data-testid="results-body"></tbody>
+        </table>
+    </section>
+</main>
+
+<script src="app.js"></script>
+<script>ferry.startSearchPage();</script>
+</body>
+</html>

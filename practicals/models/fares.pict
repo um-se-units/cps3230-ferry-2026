@@ -1,0 +1,18 @@
+# The fare rules as a pairwise model, for week 3.
+#
+# One booking: a lead passenger, whose age and residency vary, travelling
+# with some other adults who are not Gozo residents, and perhaps a vehicle.
+#
+#   pict practicals/models/fares.pict
+#
+# Each line of the output after the header is one test case. Work out its
+# expected price from the rules in practicals/week-03.md, never by running
+# the code.
+
+LeadAge:       infant, child, adult
+LeadResident:  yes, no
+OtherAdults:   0, 8, 9, 10
+Vehicle:       yes, no
+
+# Nobody books an infant to travel alone.
+IF [LeadAge] = "infant" THEN [OtherAdults] > 0;

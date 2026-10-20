@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -16,6 +17,9 @@ final class Fixtures {
     static final LocalDateTime DEPARTURE = SAILING_DATE.atTime(7, 45);
     static final String SAILING_ID = "2026-10-06-0745-CIRKEWWA";
     static final String CONTACT = "traveller@example.com";
+    static final Vehicle CAR = new Vehicle("ABC 123");
+    static final String GOOD_CARD = "4111111111111111";
+    static final String DECLINED_CARD = "4111111111110000";
 
     private Fixtures() {
     }
@@ -29,6 +33,15 @@ final class Fixtures {
                 passengerCapacity, vehicleCapacity);
     }
 
+    static Sailing sailingFrom(Terminal from, LocalDateTime departsAt) {
+        return new Sailing(idFor(from, departsAt), from, from.opposite(), departsAt, 900, 140);
+    }
+
+    static String idFor(Terminal from, LocalDateTime departsAt) {
+        return departsAt.toLocalDate() + "-"
+                + departsAt.toLocalTime().format(DateTimeFormatter.ofPattern("HHmm")) + "-" + from;
+    }
+
     static Passenger adult() {
         return aged(30);
     }
@@ -38,7 +51,11 @@ final class Fixtures {
     }
 
     static Passenger resident() {
-        return new Passenger("Gozo resident", SAILING_DATE.minusYears(30), true);
+        return residentAged(30);
+    }
+
+    static Passenger residentAged(int years) {
+        return new Passenger("Gozo resident aged " + years, SAILING_DATE.minusYears(years), true);
     }
 
     static List<Passenger> adults(int howMany) {
@@ -55,8 +72,14 @@ final class Fixtures {
     }
 
     static Booking reservationWithVehicle(Passenger... passengers) {
-        return Booking.reservation("FF-0002", sailing(), List.of(passengers),
-                Optional.of(new Vehicle("ABC 123")), CONTACT, DEPARTURE.minusDays(1));
+        return Booking.reservation("FF-0002", sailing(), List.of(passengers), Optional.of(CAR),
+                CONTACT, DEPARTURE.minusDays(1));
+    }
+
+    static Booking reservationOn(Sailing sailing, String reference, String contactEmail,
+                                 LocalDateTime reservedAt, Passenger... passengers) {
+        return Booking.reservation(reference, sailing, List.of(passengers), Optional.empty(),
+                contactEmail, reservedAt);
     }
 
     static Clock clockAt(LocalDateTime moment) {

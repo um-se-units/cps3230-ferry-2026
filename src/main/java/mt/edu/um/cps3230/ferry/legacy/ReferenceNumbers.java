@@ -1,16 +1,20 @@
 package mt.edu.um.cps3230.ferry.legacy;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import mt.edu.um.cps3230.ferry.domain.BookingReferences;
 
 /**
  * Hands out the references printed on booking tickets, such as
- * {@code FF-K7M2QX}. There is one for the whole application, reached with
- * {@link #getInstance()}, and it remembers every reference it has handed out
- * so that none is ever handed out twice. The terminal kiosks give it to
- * {@code BookingService} as that service's {@link BookingReferences}.
+ * {@code FF-K7M2QX}, and remembers every reference it has handed out so that
+ * none is ever handed out twice.
+ *
+ * <p>The randomness is handed in, so a test can seed it or script it, and the
+ * memory belongs to each instance, so two tests never share it. The
+ * application makes one and gives it to {@code BookingService}; nothing needs
+ * to be global for there to be only one.
  */
 public final class ReferenceNumbers implements BookingReferences {
 
@@ -18,36 +22,33 @@ public final class ReferenceNumbers implements BookingReferences {
     private static final String ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int LENGTH = 6;
 
-    private static final ReferenceNumbers INSTANCE = new ReferenceNumbers();
-    private static final Random RANDOM = new Random();
-    private static final Set<String> ISSUED = new HashSet<>();
+    private final Random random;
+    private final Set<String> issued = new HashSet<>();
 
-    private ReferenceNumbers() {
+    /** References from an unseeded generator, as the kiosks need them. */
+    public ReferenceNumbers() {
+        this(new Random());
     }
 
-    public static ReferenceNumbers getInstance() {
-        return INSTANCE;
+    public ReferenceNumbers(Random random) {
+        this.random = Objects.requireNonNull(random, "random");
     }
 
     @Override
-    public String next() {
-        synchronized (ISSUED) {
-            String reference;
-            do {
-                StringBuilder characters = new StringBuilder("FF-");
-                for (int count = 0; count < LENGTH; count++) {
-                    characters.append(ALPHABET.charAt(RANDOM.nextInt(ALPHABET.length())));
-                }
-                reference = characters.toString();
-            } while (!ISSUED.add(reference));
-            return reference;
-        }
+    public synchronized String next() {
+        String reference;
+        do {
+            StringBuilder characters = new StringBuilder("FF-");
+            for (int count = 0; count < LENGTH; count++) {
+                characters.append(ALPHABET.charAt(random.nextInt(ALPHABET.length())));
+            }
+            reference = characters.toString();
+        } while (!issued.add(reference));
+        return reference;
     }
 
-    /** How many references have been handed out since the application started. */
-    public static int issuedCount() {
-        synchronized (ISSUED) {
-            return ISSUED.size();
-        }
+    /** How many references this generator has handed out. */
+    public synchronized int issuedCount() {
+        return issued.size();
     }
 }

@@ -1,33 +1,52 @@
 package mt.edu.um.cps3230.ferry.legacy;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.ZoneId;
+import java.util.Objects;
+import mt.edu.um.cps3230.ferry.adapters.weather.OpenMeteoWeatherFeed;
 import mt.edu.um.cps3230.ferry.domain.Sailing;
 import mt.edu.um.cps3230.ferry.domain.SailingStatus;
+import mt.edu.um.cps3230.ferry.ports.Forecast;
+import mt.edu.um.cps3230.ferry.ports.WeatherFeed;
 
 /**
  * Decides whether a sailing goes ahead, as the terminal kiosks have always
- * done it: it asks Open-Meteo for the sea and the wind at the departure hour
- * and compares them with the operator's thresholds.
+ * done it: it reads the sea and the wind at the departure hour and compares
+ * them with the operator's thresholds.
  *
  * <p>A sailing that has already left cannot be judged. A sailing more than
  * {@value #FORECAST_HORIZON_HOURS} hours away is not judged yet, because the
  * forecast is not trusted that far ahead: it sails until a later check says
  * otherwise.
+ *
+ * <p>Both of the things it used to reach for, the time and the forecast, are
+ * now handed to it, so a test can fix the one and stub the other.
  */
 public class LegacyCancellationPolicy {
 
     static final int FORECAST_HORIZON_HOURS = 48;
 
+    private final Clock clock;
+    private final WeatherFeed weather;
+
+    /**
+     * The policy the kiosks run: the real forecast, on Malta time. The old
+     * code read the time in whatever zone the machine was set to, which was
+     * only right on a machine set to Malta.
+     */
+    public LegacyCancellationPolicy() {
+        this(Clock.system(ZoneId.of("Europe/Malta")), new OpenMeteoWeatherFeed(HttpClient.newHttpClient()));
+    }
+
+    public LegacyCancellationPolicy(Clock clock, WeatherFeed weather) {
+        this.clock = Objects.requireNonNull(clock, "clock");
+        this.weather = Objects.requireNonNull(weather, "weather");
+    }
+
     public SailingStatus decide(Sailing sailing) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(clock);
         if (!sailing.departsAt().isAfter(now)) {
             throw new IllegalStateException("sailing " + sailing.id() + " has already left");
         }
@@ -35,39 +54,13 @@ public class LegacyCancellationPolicy {
             return SailingStatus.SAILS;
         }
 
-        HttpClient client = HttpClient.newHttpClient();
-        String day = sailing.date().toString();
-        String hour = sailing.departsAt().truncatedTo(ChronoUnit.HOURS).toString();
-        String where = "?latitude=36.02&longitude=14.30&timezone=Europe%2FMalta&start_date=" + day
-                + "&end_date=" + day;
-        double waveHeight = reading(client, "https://marine-api.open-meteo.com/v1/marine" + where
-                + "&hourly=wave_height", "wave_height", hour);
-        double gusts = reading(client, "https://api.open-meteo.com/v1/forecast" + where
-                + "&hourly=wind_gusts_10m", "wind_gusts_10m", hour);
-
-        if (waveHeight >= 2.5 || gusts >= 60) {
+        Forecast forecast = weather.forecastAt(sailing.departsAt());
+        if (forecast.waveHeightMetres() >= 2.5 || forecast.windGustKph() >= 60) {
             return SailingStatus.CANCELLED;
         }
-        if (waveHeight >= 1.8 || gusts >= 45) {
+        if (forecast.waveHeightMetres() >= 1.8 || forecast.windGustKph() >= 45) {
             return SailingStatus.AT_RISK;
         }
         return SailingStatus.SAILS;
-    }
-
-    private double reading(HttpClient client, String url, String measure, String hour) {
-        try {
-            HttpResponse<String> response = client.send(HttpRequest.newBuilder(URI.create(url)).build(),
-                    HttpResponse.BodyHandlers.ofString());
-            JsonNode hourly = new ObjectMapper().readTree(response.body()).path("hourly");
-            JsonNode times = hourly.path("time");
-            for (int index = 0; index < times.size(); index++) {
-                if (times.get(index).asText().equals(hour)) {
-                    return hourly.path(measure).get(index).asDouble();
-                }
-            }
-            throw new IllegalStateException("Open-Meteo has no " + measure + " for " + hour);
-        } catch (IOException | InterruptedException failure) {
-            throw new IllegalStateException("could not reach Open-Meteo", failure);
-        }
     }
 }
